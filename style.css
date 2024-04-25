@@ -61,7 +61,14 @@ body {
     grid-template-columns: repeat(5, var(--cell-size));
     grid-auto-columns: var(--cell-size);
     grid-template-rows: var(--cell-size);
+    cursor: move;
 }
+
+.ships-select .ship.cell:first-child::after {
+    content: '\21FF';
+    color: white;
+}
+
 
 /* BOARD */
 
@@ -81,7 +88,7 @@ body {
     border: 2px solid black;
     width: 100%;
     height: 100%;
- 
+    
     display: flex;
     justify-content: center;
     align-items: center;
