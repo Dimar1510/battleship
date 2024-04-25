@@ -2,7 +2,7 @@ import playGame from "./game";
 
 const render = function() {
     const shipField = document.querySelector('.ships-select')
-
+    
     function gameboard(gameboard, player, newgame) {
         const boardField = player ?
             document.querySelector('.board-player') :
@@ -12,7 +12,7 @@ const render = function() {
             shipField.style.display = 'flex'
             boardField.style.display = 'none' 
             return
-        }
+        } 
         for (let i = 0; i < 10; i++) {
             for (let j = 0; j < 10; j++) {
                 boardField.append(createCell(gameboard, player, i, j))   
@@ -29,35 +29,61 @@ const render = function() {
         const cell = document.createElement('div')    
         const coord = gameboard.board[row][column]
         cell.classList.add('cell')
-        
+        cell.dataset.row = row
+        cell.dataset.column = column
         if (coord) {
             if (coord === 'miss') cell.classList.add('miss')
             // it is a ship
             else {
-                // if (player) 
-                cell.classList.add('ship')
+                if (player) cell.classList.add('ship')
                 if (coord.hits.includes(`${row}, ${column}`)) cell.classList.add('hit')
                 if (coord.isSunk()) cell.classList.add('sunk')
                 if (player) {
+                    cell.draggable = true
                     cell.onclick = () => playGame.rotateShip(coord)
+                    cell.ondragstart = () => {
+                        playGame.deleteShip(coord)    
+                    }
+                    cell.ondrag = () => {
+                        document.querySelector("html").ondrop = (e) => {
+                            const newRow = parseInt(e.target.dataset.row)
+                            const newColumn = parseInt(e.target.dataset.column)
+                            
+                            if (!playGame.moveship(newRow, newColumn, coord)) {
+                                playGame.moveship(row, column, coord)
+                            } 
+                        }
+                    }
+
+                } else {
+                    cell.onclick = () => playGame.takeTurn(row, column)
                 }
             }
+        } else {
+            // empty cell
+            cell.ondragstart = function() {
+                return false;
+            };
         }
 
-        if (!player) {
-            cell.addEventListener('click', () => {
-                playGame.takeTurn(row, column)
-            })
-        } else {
-            cell.ondragover= (e) => e.preventDefault()
+        if (player) {
+            if (!coord) {
+                cell.ondragenter = (e) => {
+                    e.preventDefault()
+                    cell.style.backgroundColor = 'blue'
+                }
+                cell.ondragleave = (e) => {
+                    e.preventDefault()
+                    cell.style.backgroundColor = 'gray'   
+                }
+                cell.ondragover = (e) => {
+                    e.preventDefault()
+                }
+            }
             cell.ondrop = (e) => {
                 e.preventDefault()
-                const index = e.dataTransfer.getData("id")
-                playGame.placeShips(row, column, index)
+                cell.style.backgroundColor = 'gray'   
             }
-            // cell.addEventListener('', () => {
-            //     playGame.placeShips(row, column)
-            // })
         }   
         return cell     
     }
@@ -81,11 +107,18 @@ const render = function() {
             shipName.textContent = ships[i].name
             shipItem.append(shipName, shipBody)
             shipField.append(shipItem)
-            shipBody.ondragstart = (e) => {
-                e.dataTransfer.setData("id", i);
-                console.log(e.dataTransfer)
+            // shipBody.ondragstart = (e) => {
+            //     e.dataTransfer.setData("id", i); 
+            // }
+            shipBody.ondrag = () => {
+                document.querySelector("html").ondrop = (e) => {
+                    const row = parseInt(e.target.dataset.row)
+                    const column = parseInt(e.target.dataset.column)
+                    playGame.placeShips(row, column, i)
+                    
+                }
             }
-            
+
         }
     }
 
@@ -123,11 +156,12 @@ const render = function() {
     }
 
  
-    function gameOver(winner) {
-        alert(winner)
+    function message(message) {
+        const messageField = document.querySelector('.message')
+        messageField.textContent = message
     }
 
-    return { gameboard, gameOver, shipsSelection, buttons }
+    return { gameboard, message, shipsSelection, buttons }
 }();
 
 export default render

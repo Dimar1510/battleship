@@ -39,7 +39,25 @@ export default class Gameboard {
             }
             ship.vertical = false
         }
+        
+        ship.row = row
+        ship.column = column   
         return true
+    }
+
+    deleteShip(ship) {
+        if (ship.vertical) {
+            for (let i = 0; i < ship.length; i++) {
+                this.board[ship.row + i][ship.column] = null
+            }
+            
+        }
+        else {
+            for (let i = 0; i < ship.length; i++) {
+                this.board[ship.row][ship.column + i] = null
+            }
+        }
+       
     }
 
     rotateShip(ship) {
@@ -51,27 +69,27 @@ export default class Gameboard {
                 for (let i = 0; i < ship.length; i++) {
                     this.board[ship.row + i][ship.column] = ship
                 }
+                
                 return false
             }
 
-            for (let i = 0; i < ship.length; i++) {
-                this.board[ship.row][ship.column + i] = ship
-            }
-            ship.vertical = false
+            this.placeShip(ship, ship.row, ship.column, false)
         }
         else {
             for (let i = 0; i < ship.length; i++) {
                 this.board[ship.row][ship.column + i] = null
             }
             if (!this.placementPossible(ship, ship.row, ship.column, true)) {
+                for (let i = 0; i < ship.length; i++) {
+                    this.board[ship.row][ship.column + i] = ship
+                }
                 return false
             }
 
-            for (let i = 0; i < ship.length; i++) {
-                this.board[ship.row + i][ship.column] = ship
-            }
-            ship.vertical = true
+            this.placeShip(ship, ship.row, ship.column, true)
         }
+      
+        return true
     }
 
     receiveAttack(row, column) {
@@ -174,9 +192,7 @@ export default class Gameboard {
                 
             }
         }
-
-        ship.row = row
-        ship.column = column    
+ 
         return true      
     }
 

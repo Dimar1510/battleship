@@ -9,8 +9,8 @@ const playGame = function() {
         computer, 
         playerBoard, 
         computerBoard,
-        gameOver,
-        placementPhase
+        gameOver
+    let placementPhase = true
     const ships = []
     let carrier, 
         battleship, 
@@ -38,6 +38,7 @@ const playGame = function() {
         render.buttons('placing')
         render.gameboard(playerBoard, true)
         computerBoard.placeShipsRandomly()
+        render.message("Drag a ship to the board, then click it to rotate")
     }
     initialize()
 
@@ -48,6 +49,7 @@ const playGame = function() {
         placementPhase = false
         render.gameboard(computerBoard, false)
         render.buttons('game')
+        render.message("Make a move")
     }
 
     function resetGame() {
@@ -74,9 +76,28 @@ const playGame = function() {
         render.shipsSelection(ships)
     }
 
+    function deleteShip(ship) {
+        playerBoard.deleteShip(ship)
+    }
+
+    function moveship(row, column, ship) {
+        if (!placementPhase) return false
+        if (!playerBoard.placementPossible(ship, row, column, ship.vertical)) {
+            return false
+        } 
+        playerBoard.deleteShip(ship)
+        playerBoard.placeShip(ship, row, column, ship.vertical)
+        render.gameboard(playerBoard, true)
+        return true
+        
+
+        
+    }
+
     function placeShips(row, column, index) {
-        if (ships.length === 0 || !playerBoard.placeShip(ships[index], row, column, false)) return
-        ships.shift()
+        if (ships.length === 0 || !playerBoard.placementPossible(ships[index], row, column, false)) return
+        playerBoard.placeShip(ships[index], row, column, false)
+        ships.splice(index, 1)
         render.gameboard(playerBoard, true)
         if (ships.length === 0) {
             render.buttons('ready')
@@ -86,8 +107,13 @@ const playGame = function() {
 
     function rotateShip(ship) {
         if (!placementPhase) return
-        playerBoard.rotateShip(ship)
+        if (!playerBoard.rotateShip(ship)) {
+            render.gameboard(playerBoard, true)
+            return  
+        }
         render.gameboard(playerBoard, true)
+        console.log(ship)
+        
         
     }
 
@@ -102,16 +128,19 @@ const playGame = function() {
         
         if (computerBoard.isGameOver()) {
             gameOver = true
-            render.gameOver(player.name)
+            render.message("YOU WIN!")
         }
         if (playerBoard.isGameOver()) {
             gameOver = true
-            render.gameOver(computer.name)
+            render.gameOver("CPU WIN")
         }
     }
 
+    function gameIsOn() {
+        return !placementPhase
+    }
     
-    return { takeTurn, placeShips, startGame, resetBoard, placeRandom, resetGame, rotateShip }
+    return { takeTurn, placeShips, startGame, resetBoard, placeRandom, resetGame, rotateShip, deleteShip, moveship, gameIsOn }
 }()
 
 export default playGame
