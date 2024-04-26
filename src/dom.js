@@ -3,30 +3,29 @@ import playGame from "./game";
 const render = function() {
     const shipField = document.querySelector('.ships-select')
     
-    function gameboard(gameboard, player, newgame) {
+    function gameboard(gameboard, player, gameGoing) {
         const boardField = player ?
             document.querySelector('.board-player') :
             document.querySelector('.board-computer')
         boardField.innerHTML = ''
-        if (newgame) {
+        if (gameGoing) {
+            shipField.style.display = 'none'
+            if (!player) boardField.style.display = 'grid' 
+           
+        } else {
             shipField.style.display = 'flex'
-            boardField.style.display = 'none' 
-            return
-        } 
+            if (!player) boardField.style.display = 'none'
+         
+        }
         for (let i = 0; i < 10; i++) {
             for (let j = 0; j < 10; j++) {
-                boardField.append(createCell(gameboard, player, i, j))   
+                boardField.append(createCell(gameboard, player, i, j, gameGoing))   
             }
         }
-        if (!player) {
-            shipField.style.display = 'none'
-            boardField.style.display = 'grid'
-        }
-
     }
 
-    function createCell(gameboard, player, row, column) {
-        const cell = document.createElement('div')    
+    function createCell(gameboard, player, row, column, gameGoing) {
+        const cell = document.createElement('div')  
         const coord = gameboard.board[row][column]
         cell.classList.add('cell')
         cell.dataset.row = row
@@ -38,26 +37,27 @@ const render = function() {
                 if (player) cell.classList.add('ship')
                 if (coord.hits.includes(`${row}, ${column}`)) cell.classList.add('hit')
                 if (coord.isSunk()) cell.classList.add('sunk')
-                if (player) {
+
+                if (player && !gameGoing) {
+                    if (coord.row === row && coord.column === column) {
+                        cell.classList.add('draggable')
+                    }
+                    function drag(e) {
+                        
+                            const newRow = parseInt(e.target.dataset.row)
+                            const newColumn = parseInt(e.target.dataset.column)
+                            playGame.moveship(newRow, newColumn, coord)
+                        
+                    }
                     cell.draggable = true
                     cell.onclick = () => playGame.rotateShip(coord)
                     cell.ondragstart = () => {
-                        playGame.deleteShip(coord)    
+                        document.querySelector(".board-player").addEventListener('drop', drag) 
                     }
-                    cell.ondrag = () => {
-                        document.querySelector("html").ondrop = (e) => {
-                            const newRow = parseInt(e.target.dataset.row)
-                            const newColumn = parseInt(e.target.dataset.column)
-                            
-                            if (!playGame.moveship(newRow, newColumn, coord)) {
-                                playGame.moveship(row, column, coord)
-                            } 
-                        }
+                    cell.ondragend = () => {
+                        document.querySelector(".board-player").removeEventListener('drop', drag)
                     }
-
-                } else {
-                    cell.onclick = () => playGame.takeTurn(row, column)
-                }
+                } 
             }
         } else {
             // empty cell
@@ -66,15 +66,15 @@ const render = function() {
             };
         }
 
-        if (player) {
+        if (player && !gameGoing) {
             if (!coord) {
                 cell.ondragenter = (e) => {
                     e.preventDefault()
-                    cell.style.backgroundColor = 'blue'
+                    cell.style.backgroundColor = 'grey'
                 }
                 cell.ondragleave = (e) => {
                     e.preventDefault()
-                    cell.style.backgroundColor = 'gray'   
+                    cell.style.background = 'none'   
                 }
                 cell.ondragover = (e) => {
                     e.preventDefault()
@@ -82,9 +82,15 @@ const render = function() {
             }
             cell.ondrop = (e) => {
                 e.preventDefault()
-                cell.style.backgroundColor = 'gray'   
+                cell.style.background = 'none' 
+                const index = e.dataTransfer.getData("id")
+                if (index) playGame.placeShips(parseInt(e.target.dataset.row), parseInt(e.target.dataset.column), index) 
+                e.dataTransfer.setData('id', null)
             }
-        }   
+        }
+        
+        if (!player && gameGoing) cell.onclick = () => playGame.takeTurn(row, column)
+          
         return cell     
     }
 
@@ -107,19 +113,15 @@ const render = function() {
             shipName.textContent = ships[i].name
             shipItem.append(shipName, shipBody)
             shipField.append(shipItem)
-            // shipBody.ondragstart = (e) => {
-            //     e.dataTransfer.setData("id", i); 
-            // }
-            shipBody.ondrag = () => {
-                document.querySelector("html").ondrop = (e) => {
-                    const row = parseInt(e.target.dataset.row)
-                    const column = parseInt(e.target.dataset.column)
-                    playGame.placeShips(row, column, i)
-                    
-                }
+            
+            shipBody.ondragstart = (e) => {
+                
+                e.dataTransfer.setData('id', i)
+            
             }
 
         }
+        
     }
 
     function buttons(mode) {
@@ -158,10 +160,15 @@ const render = function() {
  
     function message(message) {
         const messageField = document.querySelector('.message')
-        messageField.textContent = message
+        messageField.innerText = message
     }
 
-    return { gameboard, message, shipsSelection, buttons }
+    function enableBoard(arg) {
+        const board = document.querySelector('.board-computer')
+        board.style.pointerEvents = arg
+    }
+
+    return { gameboard, message, shipsSelection, buttons, enableBoard }
 }();
 
 export default render

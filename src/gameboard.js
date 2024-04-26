@@ -143,6 +143,7 @@ export default class Gameboard {
         return true
     }
 
+
     placementPossible(ship, row, column, vertical) {
         if (row < 0 || row > SIZE - 1 || column < 0 || column > SIZE - 1) {
             return false
@@ -151,7 +152,7 @@ export default class Gameboard {
         if (vertical) {
             if (row + ship.length > SIZE ) return false 
             for (let i = 0; i < ship.length; i++) {
-                if (this.board[row + i][column]) return false
+                if (this.board[row + i][column] && this.board[row + i][column] !== ship) return false
             }
 
             let start = -1
@@ -161,11 +162,15 @@ export default class Gameboard {
 
             for ( let i = start; i < end; i++) {
                 if (column === 0) {
-                    if (this.board[row + i][column + 1] || this.board[row + i][column]) return false    
+                    if ((this.board[row + i][column + 1] && this.board[row + i][column + 1] !== ship) || 
+                        (this.board[row + i][column] && this.board[row + i][column] !== ship)) return false    
                 } else if (column === SIZE - 1) {
-                    if (this.board[row + i][column - 1] || this.board[row + i][column]) return false  
+                    if ((this.board[row + i][column - 1] && this.board[row + i][column - 1] !== ship ) || 
+                        (this.board[row + i][column] && this.board[row + i][column] !== ship)) return false  
                 } else {
-                    if (this.board[row + i][column + 1] || this.board[row + i][column - 1] || this.board[row + i][column]) return false  
+                    if ((this.board[row + i][column + 1] && this.board[row + i][column + 1] !== ship)|| 
+                        (this.board[row + i][column - 1] && this.board[row + i][column - 1] !== ship) || 
+                        (this.board[row + i][column] && this.board[row + i][column] !== ship)) return false  
                 }
                 
             }
@@ -173,7 +178,7 @@ export default class Gameboard {
         } else {
             if (column + ship.length > SIZE) return false
             for (let i = 0; i < ship.length; i++) {
-                if (this.board[row][column + i]) return false
+                if (this.board[row][column + i] && this.board[row][column + i] !== ship) return false
             }
 
             let start = -1
@@ -183,16 +188,19 @@ export default class Gameboard {
 
             for ( let i = start; i < end; i++) {
                 if (row === 0) {
-                    if (this.board[row + 1][column + i] || this.board[row][column + i]) return false    
+                    if ((this.board[row + 1][column + i] && this.board[row + 1][column + i] !== ship)||
+                        (this.board[row][column + i] && this.board[row][column + i] !== ship)) return false    
                 } else if (row === SIZE - 1) {
-                    if (this.board[row - 1][column + i] || this.board[row][column + i]) return false  
+                    if ((this.board[row - 1][column + i] && this.board[row - 1][column + i] !== ship )||
+                        (this.board[row][column + i] && this.board[row][column + i] !== ship)) return false  
                 } else {
-                    if (this.board[row + 1][column + i] || this.board[row - 1][column + i] || this.board[row][column + i]) return false  
+                    if ((this.board[row + 1][column + i] && this.board[row + 1][column + i] !== ship)||
+                        (this.board[row - 1][column + i] && this.board[row - 1][column + i] !== ship)|| 
+                        (this.board[row][column + i] && this.board[row][column + i] !== ship)) return false  
                 }
                 
             }
         }
- 
         return true      
     }
 

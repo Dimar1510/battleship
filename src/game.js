@@ -17,7 +17,7 @@ const playGame = function() {
         destroyer,
         submarine,
         patrolBoat
-
+    let computerMoving = false
     function initialize() {
         player = new Player('player')
         computer = new Player('CPU')
@@ -38,7 +38,7 @@ const playGame = function() {
         render.buttons('placing')
         render.gameboard(playerBoard, true)
         computerBoard.placeShipsRandomly()
-        render.message("Drag a ship to the board, then click it to rotate")
+        render.message("Drag a ship to the board \n Then click the ship to rotate it")
     }
     initialize()
 
@@ -47,21 +47,22 @@ const playGame = function() {
     
     function startGame() {
         placementPhase = false
-        render.gameboard(computerBoard, false)
+        render.gameboard(playerBoard, true, true)
+        render.gameboard(computerBoard, false, true)
         render.buttons('game')
         render.message("Make a move")
     }
 
     function resetGame() {
         initialize()
-        render.gameboard(computerBoard, false, true)
+        render.gameboard(computerBoard, false)
     }
 
     function resetBoard() {
         playerBoard.clear()
         ships.length = 0
         ships.push(carrier, battleship, destroyer, submarine, patrolBoat)
-        console.log(ships)
+       
         render.buttons('placing')
         render.gameboard(playerBoard, true)
         render.shipsSelection(ships)
@@ -77,6 +78,7 @@ const playGame = function() {
     }
 
     function deleteShip(ship) {
+        if (!placementPhase) return false
         playerBoard.deleteShip(ship)
     }
 
@@ -88,14 +90,16 @@ const playGame = function() {
         playerBoard.deleteShip(ship)
         playerBoard.placeShip(ship, row, column, ship.vertical)
         render.gameboard(playerBoard, true)
+        console.log('move ship')
         return true
         
-
+      
         
     }
 
     function placeShips(row, column, index) {
         if (ships.length === 0 || !playerBoard.placementPossible(ships[index], row, column, false)) return
+        console.log(ships[index])
         playerBoard.placeShip(ships[index], row, column, false)
         ships.splice(index, 1)
         render.gameboard(playerBoard, true)
@@ -103,6 +107,7 @@ const playGame = function() {
             render.buttons('ready')
         }
         render.shipsSelection(ships)
+        console.log('placeship')
     }
 
     function rotateShip(ship) {
@@ -112,35 +117,41 @@ const playGame = function() {
             return  
         }
         render.gameboard(playerBoard, true)
-        console.log(ship)
+      
         
         
     }
 
-    function takeTurn(row, column) {
+    async function takeTurn(row, column) {
         if (gameOver || placementPhase) return
-        player.attack(row, column, computerBoard)
-        render.gameboard(computerBoard, false)
-        console.log(player.name, 'attacks:', row, column)
+        if (!player.attack(row, column, computerBoard)) return 
+        render.enableBoard('none')
+        render.gameboard(computerBoard, false, true)
+        render.message("Computer makes a move...")
+        await timeOut()
         computer.attackCPU(playerBoard)
-        render.gameboard(playerBoard, true)
+        render.gameboard(playerBoard, true, true) 
+        render.message("Your move") 
+        render.enableBoard('all')
         console.log(computer.name, 'attacks:', computer.lastMove.row, computer.lastMove.column)
         
         if (computerBoard.isGameOver()) {
             gameOver = true
-            render.message("YOU WIN!")
+            render.message("VICTORY!")
         }
         if (playerBoard.isGameOver()) {
             gameOver = true
-            render.gameOver("CPU WIN")
+            render.message("DEFEAT")
         }
+       
     }
 
-    function gameIsOn() {
-        return !placementPhase
-    }
+    function timeOut() {   
+        return new Promise((resolve) => setTimeout(resolve, 750))
+      }
+
     
-    return { takeTurn, placeShips, startGame, resetBoard, placeRandom, resetGame, rotateShip, deleteShip, moveship, gameIsOn }
+    return { takeTurn, placeShips, startGame, resetBoard, placeRandom, resetGame, rotateShip, deleteShip, moveship}
 }()
 
 export default playGame
