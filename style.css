@@ -42,7 +42,7 @@ body {
 }
 
 .field {
-    width: clamp(300px, 90%, 800px);
+    width: clamp(300px, 90%, 900px);
     display: flex;
     flex-wrap: wrap;
     row-gap: 2rem;
@@ -51,7 +51,7 @@ body {
 
 .field > div {
     display: flex;
-    padding-bottom: 1rem;
+    
     flex: 1;
     justify-content: center;
 
@@ -173,7 +173,6 @@ button:not(button:disabled):hover {
 
 @media (max-width: 900px) {
     body {
-        padding-top: 2rem;
         justify-content: flex-start;
     }
     .buttons {
