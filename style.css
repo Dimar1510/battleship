@@ -142,7 +142,7 @@ button:not(button:disabled):hover {
 }
 
 .cell.miss::after {
-    content: '\2600';
+    content: '\2733';
     color: var(--clr-miss);
     font-weight: bolder;
 }
