@@ -5,18 +5,18 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: "Montserrat", sans-serif; 
 }
 
 :root {
     --board-size: 10;
-    --cell-size: 40px;
-    font-family: "Montserrat", sans-serif; 
-}
-
-.header {
-    font-family: "Black Ops One", system-ui;
-    text-transform: uppercase;
-    font-size: 5rem;
+    --cell-size: clamp(20px, 5vw, 40px);
+    --clr-bg: #d3d3d3;
+    --clr-ship: #616161;
+    --clr-miss: rgb(0, 56, 96);
+    --clr-hit: maroon;
+    --clr-accent: #004272;
+    --clr-border: rgb(127, 127, 127);
 }
 
 body {
@@ -25,20 +25,58 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
+    gap: 1rem;
+    background-color: var(--clr-bg);
+}
+
+.header {
+    font-family: "Black Ops One", system-ui;
+    text-transform: uppercase;
+    font-size: clamp(1rem, 5rem, 12vw);
+    color: var(--clr-accent);
+}
+
+.message {
+    font-size: clamp(1rem, 1.5rem, 2.5vw);
+    text-align: center;
 }
 
 .field {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    width: clamp(300px, 90%, 800px);
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 2rem;
+    column-gap: 5rem;
 }
 
 .field > div {
-    width: 100%;
     display: flex;
+    padding-bottom: 1rem;
+    flex: 1;
     justify-content: center;
+
 }
+
+.buttons {
+    display: flex;
+    width: 50%;
+    gap: 1rem;
+    justify-content: space-evenly;
+}
+
+button {
+    font-size: clamp(1rem, 2rem, 6vw);
+    font-family: "Black Ops One", system-ui;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+button:not(button:disabled):hover {
+    color: var(--clr-accent);
+}
+
+
 
 /* SHIPS SELECT */
 
@@ -64,9 +102,14 @@ body {
     cursor: move;
 }
 
-.ships-select .ship.cell:first-child::after {
-    content: '\21FF';
-    color: white;
+.ships-select .ship.cell:first-child::after,
+.ship.cell.draggable::after {
+    content: url(images/arrow.svg);
+    width: 100%;
+    height: 100%;
+    scale: 0.5;
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(285deg) brightness(101%) contrast(104%);
+    cursor: move;
 }
 
 
@@ -76,44 +119,68 @@ body {
     display: grid;
     grid-template-columns: repeat(var(--board-size), var(--cell-size));
     grid-template-rows: repeat(var(--board-size), var(--cell-size));
-    gap: 2px;
+    border: 2px solid black;
 }
 
 .board-computer {
     display: none;
 }
 
+.board-computer .cell:hover {
+    background-color: #808080;
+}
+
 .cell {
-    background-color: gray;
-    border: 2px solid black;
+    background: none;
+    border: 1px solid var(--clr-border);
     width: 100%;
     height: 100%;
-    
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .cell.miss::after {
-    content: '';
-    background-color: aquamarine;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-   
-}
-
-.cell.ship {
-    background-color: #333;
-}
-
-.cell.sunk {
-    background-color: maroon
-}
-
-.cell.hit::after {
-    content: 'X';
-    color: white;
+    content: '\2600';
+    color: var(--clr-miss);
     font-weight: bolder;
 }
 
+.cell.ship {
+    background-color: var(--clr-ship);
+    border: 2px solid black;
+    border-radius: 2px;
+}
+
+.cell.sunk {
+    background-color: var(--clr-hit)
+}
+
+
+.cell.hit::after {
+    content: '\2717';
+    color: var(--clr-hit);
+    font-weight: bolder;
+}
+
+.cell.sunk.hit::after,
+.cell.ship.hit::after {
+    color: white;
+    
+}
+
+
+
+@media (max-width: 900px) {
+    body {
+        padding-top: 2rem;
+        justify-content: flex-start;
+    }
+    .buttons {
+        width: 100%;
+        gap: 0;
+    }
+    .field {
+        flex-direction: column;
+    }
+}
