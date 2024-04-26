@@ -99,7 +99,7 @@ button:not(button:disabled):hover {
     grid-template-columns: repeat(5, var(--cell-size));
     grid-auto-columns: var(--cell-size);
     grid-template-rows: var(--cell-size);
-    cursor: move;
+    pointer-events: none;
 }
 
 .ships-select .ship.cell:first-child::after,
@@ -110,6 +110,7 @@ button:not(button:disabled):hover {
     scale: 0.5;
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(285deg) brightness(101%) contrast(104%);
     cursor: move;
+    pointer-events: all;
 }
 
 

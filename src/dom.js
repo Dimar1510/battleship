@@ -41,27 +41,26 @@ const render = function() {
                 if (player && !gameGoing) {
                     if (coord.row === row && coord.column === column) {
                         cell.classList.add('draggable')
-                    }
-                    function drag(e) {
-                        
+                            function drag(e) {
                             const newRow = parseInt(e.target.dataset.row)
                             const newColumn = parseInt(e.target.dataset.column)
                             playGame.moveship(newRow, newColumn, coord)
-                        
-                    }
-                    cell.draggable = true
-                    cell.onclick = () => playGame.rotateShip(coord)
-                    cell.ondragstart = () => {
-                        document.querySelector(".board-player").addEventListener('drop', drag) 
-                    }
-                    cell.ondragend = () => {
-                        document.querySelector(".board-player").removeEventListener('drop', drag)
-                    }
+                        }
+                        cell.draggable = true
+                        cell.onclick = () => playGame.rotateShip(coord)
+                        cell.ondragstart = () => {
+                            document.querySelector(".board-player").addEventListener('drop', drag) 
+                        }
+                        cell.ondragend = () => {
+                            document.querySelector(".board-player").removeEventListener('drop', drag)
+                        }    
+                    } else cell.style.pointerEvents = 'none'
                 } 
             }
         } else {
             // empty cell
             cell.ondragstart = function() {
+                e.preventDefault()
                 return false;
             };
         }
@@ -117,7 +116,8 @@ const render = function() {
             shipBody.ondragstart = (e) => {
                 
                 e.dataTransfer.setData('id', i)
-            
+                e.dataTransfer.setData('length', ships[i].length)
+
             }
 
         }
