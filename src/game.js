@@ -90,7 +90,7 @@ const playGame = function() {
         playerBoard.deleteShip(ship)
         playerBoard.placeShip(ship, row, column, ship.vertical)
         render.gameboard(playerBoard, true)
-        console.log('move ship')
+        
         return true
         
       
@@ -99,7 +99,7 @@ const playGame = function() {
 
     function placeShips(row, column, index) {
         if (ships.length === 0 || !playerBoard.placementPossible(ships[index], row, column, false)) return
-        console.log(ships[index])
+     
         playerBoard.placeShip(ships[index], row, column, false)
         ships.splice(index, 1)
         render.gameboard(playerBoard, true)
@@ -107,7 +107,7 @@ const playGame = function() {
             render.buttons('ready')
         }
         render.shipsSelection(ships)
-        console.log('placeship')
+        
     }
 
     function rotateShip(ship) {

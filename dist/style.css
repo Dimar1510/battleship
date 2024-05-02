@@ -94,6 +94,10 @@ button:not(button:disabled):hover {
     justify-content: flex-end;
 }
 
+.ship-name {
+    user-select: none;
+}
+
 .ship-body {
     display: grid;
     grid-template-columns: repeat(5, var(--cell-size));

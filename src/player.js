@@ -35,23 +35,29 @@ export default class Player {
 
     attackCPU(gameboard) {
         if(gameboard.isGameOver()) return false
+
         if (this.lastHit.ship) {
             // if we just sunk a ship, attack at random place
             if (this.lastHit.ship.isSunk()) {
                 this.hits = []
+                this.directions = ['up', 'down', 'left', 'right']
                 this.randomAttack(gameboard)
                 return true
             }
             if (this.hits.length === 1) {
                 // 1 of 4 directions
+                
                 if (this.directions.length === 0) {
                     this.randomAttack(gameboard)
+                    this.hits = []
                     this.directions = ['up', 'down', 'left', 'right']
                     return true
                 }
-                let currentDirection = this.directions[Math.floor(Math.random())*this.directions.length]
-                this.directions.splice(this.directions.indexOf(currentDirection), 1)
+                let currentDirection = this.directions[Math.floor(Math.random()*this.directions.length)]
+            
+
                 if (!this.attackLine(this.lastHit.row, this.lastHit.column, currentDirection, gameboard)) {
+                    this.directions.splice(this.directions.indexOf(currentDirection), 1)
                     this.attackCPU(gameboard)
                 } 
                 this.directions = ['up', 'down', 'left', 'right']
@@ -89,7 +95,7 @@ export default class Player {
         if (direction === 'left') {
             return this.attack(row, column - 1, gameboard)
         }
-        if (direction === 'rigth') {
+        if (direction === 'right') {
             return this.attack(row , column + 1, gameboard)
         }
     }
