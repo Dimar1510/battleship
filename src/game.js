@@ -133,7 +133,7 @@ const playGame = function() {
         render.gameboard(playerBoard, true, true) 
         render.message("Your move") 
         render.enableBoard('all')
-        console.log(computer.name, 'attacks:', computer.lastMove.row, computer.lastMove.column)
+        console.log(`${computer.name} attacks: ${String.fromCharCode(65 + computer.lastMove.column)}${computer.lastMove.row + 1}`)
         
         if (computerBoard.isGameOver()) {
             gameOver = true

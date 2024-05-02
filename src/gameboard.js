@@ -12,6 +12,7 @@ export default class Gameboard {
                 this.board[i][j] = null
             }
         }
+        this.size = SIZE
     }
 
     clear() {

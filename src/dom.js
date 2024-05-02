@@ -17,9 +17,27 @@ const render = function() {
             if (!player) boardField.style.display = 'none'
          
         }
-        for (let i = 0; i < 10; i++) {
-            for (let j = 0; j < 10; j++) {
-                boardField.append(createCell(gameboard, player, i, j, gameGoing))   
+        
+        const space =document.createElement('div')
+        boardField.append(space)
+        for (let i = 0; i < gameboard.size; i++) {
+            const columns =document.createElement('div')
+            columns.classList.add('columns')
+            columns.textContent = String.fromCharCode(65+i)
+            boardField.append(columns)
+        }
+        
+        let index = 0
+        for (let i = 0; i < gameboard.size; i++) {
+            for (let j = 0; j < gameboard.size; j++) {
+                if (index % gameboard.size === 0) {
+                    const rows = document.createElement('div')
+                    rows.classList.add('rows')
+                    rows.textContent = Math.ceil((index + 1) / 10)
+                    boardField.append(rows)
+                }
+                boardField.append(createCell(gameboard, player, i, j, gameGoing)) 
+                index ++  
             }
         }
     }
