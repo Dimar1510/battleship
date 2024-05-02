@@ -11,7 +11,7 @@
 :root {
     --board-size: 10;
     --cell-size: clamp(20px, 5vw, 40px);
-    --clr-bg: #d3d3d3;
+    --clr-bg: #eee;
     --clr-ship: #616161;
     --clr-miss: rgb(0, 56, 96);
     --clr-hit: maroon;
