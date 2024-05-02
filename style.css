@@ -111,7 +111,7 @@ button:not(button:disabled):hover {
     content: url(images/arrow.svg);
     width: 100%;
     height: 100%;
-    scale: 0.5;
+    scale: 0.8;
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(285deg) brightness(101%) contrast(104%);
     cursor: move;
     pointer-events: all;
@@ -122,9 +122,9 @@ button:not(button:disabled):hover {
 
 .board {
     display: grid;
-    grid-template-columns: repeat(var(--board-size), var(--cell-size));
-    grid-template-rows: repeat(var(--board-size), var(--cell-size));
-    border: 2px solid black;
+    grid-template-columns: repeat(calc(var(--board-size) + 1), var(--cell-size));
+    grid-template-rows: repeat(calc(var(--board-size) + 1), var(--cell-size));
+    transform: translateX(calc(0px - (var(--cell-size)) / 2));
 }
 
 .board-computer {
@@ -133,6 +133,12 @@ button:not(button:disabled):hover {
 
 .board-computer .cell:hover {
     background-color: #808080;
+}
+
+.columns, .rows {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .cell {
