@@ -42,7 +42,7 @@ body {
 }
 
 .field {
-    width: clamp(300px, 90%, 900px);
+    width: clamp(300px, 90%, 1000px);
     display: flex;
     flex-wrap: wrap;
     row-gap: 2rem;
