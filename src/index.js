@@ -1,4 +1,3 @@
 import playGame from "./game";
-
-
-playGame
+import "./styles/index.scss";
+playGame;

@@ -1,20 +1,29 @@
 {
-  "type": "module",
   "name": "battleship",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "build": "webpack",
-    "dist": " git subtree push --prefix dist origin gh-pages"
+    "build": "webpack build --mode 'production'",
+    "dist": " git subtree push --prefix dist origin gh-pages",
+    "dev": "webpack --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.0",
+    "install": "^0.13.0",
     "jest": "^29.7.0",
-    "webpack": "^5.91.0",
+    "mini-css-extract-plugin": "^2.9.0",
+    "npm": "^10.8.2",
+    "sass": "^1.77.8",
+    "sass-loader": "^16.0.0",
+    "style-loader": "^4.0.0",
+    "svg-inline-loader": "^0.8.2",
+    "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   }
 }

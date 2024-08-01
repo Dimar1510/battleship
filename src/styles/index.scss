@@ -1,0 +1,80 @@
+@import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import "./vars.scss";
+
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background-color: $clr-bg;
+}
+
+.header {
+  font-family: "Black Ops One", system-ui;
+  text-transform: uppercase;
+  font-size: clamp(1rem, 5rem, 12vw);
+  color: $clr-accent;
+}
+
+.message {
+  font-size: clamp(1rem, 1.5rem, 2.5vw);
+  text-align: center;
+}
+
+.field {
+  width: clamp(300px, 90%, 1000px);
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 2rem;
+  column-gap: 5rem;
+}
+
+.field > div {
+  display: flex;
+
+  flex: 1;
+  justify-content: center;
+}
+
+.buttons {
+  display: flex;
+  width: 50%;
+  gap: 1rem;
+  justify-content: space-evenly;
+}
+
+button {
+  font-size: clamp(1rem, 2rem, 6vw);
+  font-family: "Black Ops One", system-ui;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button:not(button:disabled):hover {
+  color: $clr-accent;
+}
+
+@media (max-width: 900px) {
+  body {
+    justify-content: flex-start;
+  }
+  .buttons {
+    width: 100%;
+    gap: 0;
+  }
+  .field {
+    flex-direction: column;
+  }
+}
