@@ -1,5 +1,28 @@
+import Gameboard from "./gameboard";
+import Ship from "./ship";
+
+type TDirection = "up" | "down" | "left" | "right";
+
 export default class Player {
-  constructor(name) {
+  name: string;
+  lastHit: {
+    row: number;
+    column: number;
+    ship: Ship;
+  };
+  lastMove: {
+    row: number;
+    column: number;
+    miss: boolean;
+  };
+  hits: {
+    row: number;
+    column: number;
+    ship: Ship;
+  }[];
+  directions: TDirection[];
+
+  constructor(name: string) {
     this.name = name;
     this.lastHit = {
       row: null,
@@ -9,36 +32,38 @@ export default class Player {
     this.lastMove = {
       row: null,
       column: null,
-      miss: null,
+      miss: false,
     };
     this.hits = [];
     this.directions = ["up", "down", "left", "right"];
   }
 
-  isHit(row, column, gameboard) {
-    if (
-      gameboard.board[row][column] === "miss" ||
-      !gameboard.board[row][column]
-    )
+  isHit(row: number, column: number, gameboard: Gameboard) {
+    const cell = gameboard.board[row][column];
+    if (typeof cell === "string" || !cell) {
       return false;
-    if (gameboard.board[row][column].hits.includes(`${row}, ${column}`))
-      return true;
+    }
+    if (cell.hits.includes(`${row}, ${column}`)) return true;
     return false;
   }
 
-  attack(row, column, gameboard) {
-    if (!gameboard.receiveAttack(row, column)) return false;
-    else {
-      if (this.isHit(row, column, gameboard)) {
-        this.lastHit = { row, column, ship: gameboard.board[row][column] };
-        this.lastMove = { row, column, miss: false };
-        this.hits.push(this.lastHit);
-      } else this.lastMove = { row, column, miss: true };
-      return true;
+  attack(row: number, column: number, gameboard: Gameboard) {
+    console.log("attack");
+    if (!gameboard.receiveAttack(row, column)) {
+      console.log("recieve attack false");
+      return false;
     }
+
+    const cell = gameboard.board[row][column];
+    if (this.isHit(row, column, gameboard)) {
+      if (typeof cell === "object") this.lastHit = { row, column, ship: cell };
+      this.lastMove = { row, column, miss: false };
+      this.hits.push(this.lastHit);
+    } else this.lastMove = { row, column, miss: true };
+    return true;
   }
 
-  attackCPU(gameboard) {
+  attackCPU(gameboard: Gameboard) {
     if (gameboard.isGameOver()) return false;
 
     if (this.lastHit.ship) {
@@ -109,7 +134,12 @@ export default class Player {
     }
   }
 
-  attackLine(row, column, direction, gameboard) {
+  attackLine(
+    row: number,
+    column: number,
+    direction: TDirection,
+    gameboard: Gameboard
+  ) {
     if (direction === "up") {
       return this.attack(row - 1, column, gameboard);
     }
@@ -124,7 +154,7 @@ export default class Player {
     }
   }
 
-  randomAttack(gameboard) {
+  randomAttack(gameboard: Gameboard) {
     let row = Math.floor(Math.random() * 10);
     let column = Math.floor(Math.random() * 10);
 

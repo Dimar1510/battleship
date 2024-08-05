@@ -3,6 +3,9 @@ import Ship from "./ship";
 const SIZE = 10;
 
 export default class Gameboard {
+  board: (null | string | Ship)[][];
+  size: number;
+
   constructor() {
     this.board = [];
     for (let i = 0; i < SIZE; i++) {
@@ -24,7 +27,7 @@ export default class Gameboard {
     }
   }
 
-  placeShip(ship, row, column, vertical) {
+  placeShip(ship: Ship, row: number, column: number, vertical: boolean) {
     if (!this.placementPossible(ship, row, column, vertical)) {
       return false;
     }
@@ -45,7 +48,7 @@ export default class Gameboard {
     return true;
   }
 
-  deleteShip(ship) {
+  deleteShip(ship: Ship) {
     if (ship.vertical) {
       for (let i = 0; i < ship.length; i++) {
         this.board[ship.row + i][ship.column] = null;
@@ -57,7 +60,7 @@ export default class Gameboard {
     }
   }
 
-  rotateShip(ship) {
+  rotateShip(ship: Ship) {
     if (ship.vertical) {
       for (let i = 0; i < ship.length; i++) {
         this.board[ship.row + i][ship.column] = null;
@@ -88,7 +91,7 @@ export default class Gameboard {
     return true;
   }
 
-  receiveAttack(row, column) {
+  receiveAttack(row: number, column: number) {
     if (row < 0 || row > SIZE - 1 || column < 0 || column > SIZE - 1) {
       return false;
     }
@@ -98,44 +101,46 @@ export default class Gameboard {
     else if (cell === "miss") {
       return false;
     } else {
-      if (cell.hits.includes(`${row}, ${column}`)) return false;
-      else cell.hit(`${row}, ${column}`);
+      if (typeof cell === "object") {
+        if (cell.hits.includes(`${row}, ${column}`)) return false;
+        else cell.hit(`${row}, ${column}`);
 
-      // if ship is sunk, fill all neighbors with misses
-      if (cell.isSunk()) {
-        if (cell.vertical) {
-          let start = 0;
-          let end = cell.length;
-          if (cell.row !== 0) {
-            start = -1;
-            this.board[cell.row - 1][cell.column] = "miss";
-          }
-          if (cell.row + cell.length !== SIZE) {
-            end = cell.length + 1;
-            this.board[cell.row + cell.length][cell.column] = "miss";
-          }
-          for (let i = start; i < end; i++) {
-            if (cell.column !== 0)
-              this.board[cell.row + i][cell.column - 1] = "miss";
-            if (cell.column !== SIZE - 1)
-              this.board[cell.row + i][cell.column + 1] = "miss";
-          }
-        } else {
-          let start = 0;
-          let end = cell.length;
-          if (cell.column !== 0) {
-            start = -1;
-            this.board[cell.row][cell.column - 1] = "miss";
-          }
-          if (cell.column + cell.length !== SIZE) {
-            end = cell.length + 1;
-            this.board[cell.row][cell.column + cell.length] = "miss";
-          }
-          for (let i = start; i < end; i++) {
-            if (cell.row !== 0)
-              this.board[cell.row - 1][cell.column + i] = "miss";
-            if (cell.row !== SIZE - 1)
-              this.board[cell.row + 1][cell.column + i] = "miss";
+        // if ship is sunk, fill all neighbors with misses
+        if (cell.isSunk()) {
+          if (cell.vertical) {
+            let start = 0;
+            let end = cell.length;
+            if (cell.row !== 0) {
+              start = -1;
+              this.board[cell.row - 1][cell.column] = "miss";
+            }
+            if (cell.row + cell.length !== SIZE) {
+              end = cell.length + 1;
+              this.board[cell.row + cell.length][cell.column] = "miss";
+            }
+            for (let i = start; i < end; i++) {
+              if (cell.column !== 0)
+                this.board[cell.row + i][cell.column - 1] = "miss";
+              if (cell.column !== SIZE - 1)
+                this.board[cell.row + i][cell.column + 1] = "miss";
+            }
+          } else {
+            let start = 0;
+            let end = cell.length;
+            if (cell.column !== 0) {
+              start = -1;
+              this.board[cell.row][cell.column - 1] = "miss";
+            }
+            if (cell.column + cell.length !== SIZE) {
+              end = cell.length + 1;
+              this.board[cell.row][cell.column + cell.length] = "miss";
+            }
+            for (let i = start; i < end; i++) {
+              if (cell.row !== 0)
+                this.board[cell.row - 1][cell.column + i] = "miss";
+              if (cell.row !== SIZE - 1)
+                this.board[cell.row + 1][cell.column + i] = "miss";
+            }
           }
         }
       }
@@ -143,7 +148,12 @@ export default class Gameboard {
     return true;
   }
 
-  placementPossible(ship, row, column, vertical) {
+  placementPossible(
+    ship: Ship,
+    row: number,
+    column: number,
+    vertical: boolean
+  ) {
     if (row < 0 || row > SIZE - 1 || column < 0 || column > SIZE - 1) {
       return false;
     }
@@ -237,8 +247,9 @@ export default class Gameboard {
   isGameOver() {
     for (let i = 0; i < SIZE; i++) {
       for (let j = 0; j < SIZE; j++) {
-        if (this.board[i][j] && this.board[i][j] !== "miss") {
-          if (!this.board[i][j].isSunk()) return false;
+        const cell = this.board[i][j];
+        if (cell && typeof cell === "object" && !cell.isSunk()) {
+          return false;
         }
       }
     }

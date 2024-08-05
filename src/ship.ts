@@ -1,5 +1,12 @@
 export default class Ship {
-  constructor(length, name = "") {
+  length: number;
+  hits: string[];
+  vertical: boolean;
+  row: number | null;
+  column: number | null;
+  name: string;
+
+  constructor(length: number, name = "") {
     this.length = length;
     this.hits = [];
     this.vertical = false;
@@ -8,7 +15,7 @@ export default class Ship {
     this.name = name;
   }
 
-  hit(position) {
+  hit(position: string) {
     this.hits.push(position);
   }
 

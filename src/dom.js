@@ -182,6 +182,14 @@ const render = (function () {
   function message(message) {
     const messageField = document.querySelector(".message");
     messageField.innerText = message;
+    messageField.classList.remove("victory");
+    messageField.classList.remove("defeat");
+    if (message === "VICTORY!") {
+      messageField.classList.add("victory");
+    }
+    if (message === "DEFEAT") {
+      messageField.classList.add("defeat");
+    }
   }
 
   function enableBoard(arg) {

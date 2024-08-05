@@ -32,6 +32,16 @@ body {
   text-align: center;
 }
 
+.message.victory {
+  color: green;
+  font-weight: 500;
+}
+
+.message.defeat {
+  color: red;
+  font-weight: 500;
+}
+
 .field {
   width: clamp(300px, 90%, 1000px);
   display: flex;
