@@ -48,9 +48,7 @@ export default class Player {
   }
 
   attack(row: number, column: number, gameboard: Gameboard) {
-    console.log("attack");
     if (!gameboard.receiveAttack(row, column)) {
-      console.log("recieve attack false");
       return false;
     }
 

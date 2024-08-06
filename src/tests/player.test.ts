@@ -2,8 +2,8 @@ import Player from "../player";
 import Gameboard from "../gameboard";
 import Ship from "../ship";
 
-let board;
-let player;
+let board: Gameboard;
+let player: Player;
 
 beforeEach(() => {
   board = new Gameboard();

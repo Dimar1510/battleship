@@ -3,12 +3,19 @@ import Gameboard from "./gameboard";
 import Player from "./player";
 import render from "./dom";
 
-const playGame = (function () {
-  let player, computer, playerBoard, computerBoard, gameOver;
+const playGame = (() => {
+  let player: Player,
+    computer: Player,
+    playerBoard: Gameboard,
+    computerBoard: Gameboard,
+    gameOver: boolean;
   let placementPhase = true;
-  const ships = [];
-  let carrier, battleship, destroyer, submarine, patrolBoat;
-  let computerMoving = false;
+  const ships: Ship[] = [];
+  let carrier: Ship,
+    battleship: Ship,
+    destroyer: Ship,
+    submarine: Ship,
+    patrolBoat: Ship;
   function initialize() {
     player = new Player("player");
     computer = new Player("CPU");
@@ -67,12 +74,12 @@ const playGame = (function () {
     render.shipsSelection(ships);
   }
 
-  function deleteShip(ship) {
+  function deleteShip(ship: Ship) {
     if (!placementPhase) return false;
     playerBoard.deleteShip(ship);
   }
 
-  function moveship(row, column, ship) {
+  function moveship(row: number, column: number, ship: Ship) {
     if (!placementPhase) return false;
     if (!playerBoard.placementPossible(ship, row, column, ship.vertical)) {
       return false;
@@ -84,7 +91,7 @@ const playGame = (function () {
     return true;
   }
 
-  function placeShips(row, column, index) {
+  function placeShips(row: number, column: number, index: number) {
     if (
       ships.length === 0 ||
       !playerBoard.placementPossible(ships[index], row, column, false)
@@ -100,7 +107,7 @@ const playGame = (function () {
     render.shipsSelection(ships);
   }
 
-  function rotateShip(ship) {
+  function rotateShip(ship: Ship) {
     if (!placementPhase) return;
     if (!playerBoard.rotateShip(ship)) {
       render.gameboard(playerBoard, true);
@@ -109,7 +116,7 @@ const playGame = (function () {
     render.gameboard(playerBoard, true);
   }
 
-  async function takeTurn(row, column) {
+  async function takeTurn(row: number, column: number) {
     if (gameOver || placementPhase) return;
     if (!player.attack(row, column, computerBoard)) return;
     render.enableBoard("none");

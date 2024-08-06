@@ -101,7 +101,7 @@ export default class Gameboard {
     else if (cell === "miss") {
       return false;
     } else {
-      if (typeof cell === "object") {
+      if (cell instanceof Ship) {
         if (cell.hits.includes(`${row}, ${column}`)) return false;
         else cell.hit(`${row}, ${column}`);
 
@@ -265,15 +265,15 @@ export default class Gameboard {
     const patrolBoat = new Ship(2);
     ships.push(carrier, battleship, destroyer, submarine, patrolBoat);
 
-    let succesfulPlacements = 0;
+    let successfulPlacements = 0;
 
-    while (succesfulPlacements < 5) {
+    while (successfulPlacements < 5) {
       const row = Math.floor(Math.random() * 10);
       const column = Math.floor(Math.random() * 10);
       const isVertical = Math.floor(Math.random() * 2) === 1 ? true : false;
 
-      if (this.placeShip(ships[succesfulPlacements], row, column, isVertical))
-        succesfulPlacements++;
+      if (this.placeShip(ships[successfulPlacements], row, column, isVertical))
+        successfulPlacements++;
     }
     return ships;
   }

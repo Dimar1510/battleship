@@ -1,8 +1,8 @@
 import Gameboard from "../gameboard";
 import Ship from "../ship";
 
-let board;
-let testBoard = [];
+let board: Gameboard;
+let testBoard: Ship[][] = [];
 for (let i = 0; i < 10; i++) {
   testBoard[i] = [];
   for (let j = 0; j < 10; j++) {
@@ -50,7 +50,7 @@ test("ship is sunk", () => {
   board.receiveAttack(5, 7);
   board.receiveAttack(5, 8);
   board.receiveAttack(5, 4);
-  expect(largeShip.hits.sunk).toBeTruthy;
+  expect(largeShip.isSunk()).toBeTruthy;
 });
 
 test("game is over", () => {

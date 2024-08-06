@@ -1,13 +1,22 @@
 import playGame from "./game";
+import Gameboard from "./gameboard";
+import Player from "./player";
+import Ship from "./ship";
 import "./styles/board.scss";
 import "./styles/ships.scss";
-const render = (function () {
-  const shipField = document.querySelector(".ships-select");
+import { getElement } from "./utils";
 
-  function gameboard(gameboard, player, gameGoing) {
+const render = (() => {
+  const shipField = getElement<HTMLElement>(".ships-select");
+
+  function gameboard(
+    gameboard: Gameboard,
+    player: boolean,
+    gameGoing?: boolean
+  ) {
     const boardField = player
-      ? document.querySelector(".board-player")
-      : document.querySelector(".board-computer");
+      ? getElement<HTMLElement>(".board-player")
+      : getElement<HTMLElement>(".board-computer");
     boardField.innerHTML = "";
     if (gameGoing) {
       shipField.style.display = "none";
@@ -32,7 +41,7 @@ const render = (function () {
         if (index % gameboard.size === 0) {
           const rows = document.createElement("div");
           rows.classList.add("rows");
-          rows.textContent = Math.ceil((index + 1) / 10);
+          rows.textContent = Math.ceil((index + 1) / 10).toString();
           boardField.append(rows);
         }
         boardField.append(createCell(gameboard, player, i, j, gameGoing));
@@ -41,14 +50,20 @@ const render = (function () {
     }
   }
 
-  function createCell(gameboard, player, row, column, gameGoing) {
+  function createCell(
+    gameboard: Gameboard,
+    player: boolean,
+    row: number,
+    column: number,
+    gameGoing: boolean
+  ) {
     const cell = document.createElement("div");
     const coord = gameboard.board[row][column];
     cell.classList.add("cell");
-    cell.dataset.row = row;
-    cell.dataset.column = column;
+    cell.dataset.row = row.toString();
+    cell.dataset.column = column.toString();
     if (coord) {
-      if (coord === "miss") cell.classList.add("miss");
+      if (typeof coord === "string") cell.classList.add("miss");
       // it is a ship
       else {
         if (player) cell.classList.add("ship");
@@ -58,11 +73,12 @@ const render = (function () {
         if (player && !gameGoing) {
           if (coord.row === row && coord.column === column) {
             cell.classList.add("draggable");
-            function drag(e) {
-              const newRow = parseInt(e.target.dataset.row);
-              const newColumn = parseInt(e.target.dataset.column);
+            const drag = (e: DragEvent) => {
+              const target = e.target as HTMLElement;
+              const newRow = parseInt(target.dataset.row || "");
+              const newColumn = parseInt(target.dataset.column || "");
               playGame.moveship(newRow, newColumn, coord);
-            }
+            };
             cell.draggable = true;
             cell.onclick = () => playGame.rotateShip(coord);
             cell.ondragstart = () => {
@@ -80,7 +96,7 @@ const render = (function () {
       }
     } else {
       // empty cell
-      cell.ondragstart = function () {
+      cell.ondragstart = function (e) {
         e.preventDefault();
         return false;
       };
@@ -104,12 +120,12 @@ const render = (function () {
         e.preventDefault();
         cell.style.background = "none";
         const index = e.dataTransfer.getData("id");
-        if (index)
-          playGame.placeShips(
-            parseInt(e.target.dataset.row),
-            parseInt(e.target.dataset.column),
-            index
-          );
+        if (index) {
+          const target = e.target as HTMLElement;
+          const newRow = parseInt(target.dataset.row || "");
+          const newColumn = parseInt(target.dataset.column || "");
+          playGame.placeShips(newRow, newColumn, parseInt(index));
+        }
         e.dataTransfer.setData("id", null);
       };
     }
@@ -120,7 +136,7 @@ const render = (function () {
     return cell;
   }
 
-  function shipsSelection(ships) {
+  function shipsSelection(ships: Ship[]) {
     shipField.innerHTML = "";
     for (let i = 0; i < ships.length; i++) {
       const shipItem = document.createElement("div");
@@ -141,16 +157,16 @@ const render = (function () {
       shipField.append(shipItem);
 
       shipBody.ondragstart = (e) => {
-        e.dataTransfer.setData("id", i);
-        e.dataTransfer.setData("length", ships[i].length);
+        e.dataTransfer.setData("id", i.toString());
+        e.dataTransfer.setData("length", ships[i].length.toString());
       };
     }
   }
 
-  function buttons(mode) {
-    const confirm = document.getElementById("button-start");
-    const reset = document.getElementById("button-reset");
-    const random = document.getElementById("button-random");
+  function buttons(mode: "placing" | "ready" | "game") {
+    const confirm = getElement<HTMLButtonElement>("#button-start");
+    const reset = getElement<HTMLButtonElement>("#button-reset");
+    const random = getElement<HTMLButtonElement>("#button-random");
 
     confirm.disabled = true;
     reset.disabled = true;
@@ -179,8 +195,8 @@ const render = (function () {
     }
   }
 
-  function message(message) {
-    const messageField = document.querySelector(".message");
+  function message(message: string) {
+    const messageField = getElement<HTMLElement>(".message");
     messageField.innerText = message;
     messageField.classList.remove("victory");
     messageField.classList.remove("defeat");
@@ -192,8 +208,8 @@ const render = (function () {
     }
   }
 
-  function enableBoard(arg) {
-    const board = document.querySelector(".board-computer");
+  function enableBoard(arg: "all" | "none") {
+    const board = getElement<HTMLElement>(".board-computer");
     board.style.pointerEvents = arg;
   }
 
